@@ -35,5 +35,5 @@ python3 "$repo_dir/scripts/sign-community-macos.py" "$app_dir"
 ditto "$repo_dir/examples/Community" "$package_dir/Examples"
 cp "$repo_dir/README.md" "$repo_dir/LICENSE.md" "$repo_dir/THIRD_PARTY_COMMUNITY.md" "$package_dir/"
 ditto -c -k --sequesterRsrc --keepParent "$package_dir" "$repo_dir/dist/Serial-Scope-macOS-$(uname -m).zip"
-shasum -a 256 "$repo_dir/dist/Serial-Scope-macOS-$(uname -m).zip" > "$repo_dir/dist/SHA256SUMS.txt"
+(cd "$repo_dir/dist" && shasum -a 256 "Serial-Scope-macOS-$(uname -m).zip" > SHA256SUMS.txt)
 echo "Packaged: $repo_dir/dist"
