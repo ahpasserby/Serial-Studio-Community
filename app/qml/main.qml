@@ -89,6 +89,7 @@ Item {
   // Trigger an interactive update check from the toolbar
   //
   function checkForUpdates() {
+    if (!Cpp_UpdaterEnabled) return
     Cpp_Updater.setNotifyOnFinish(Cpp_AppUpdaterUrl, true)
     Cpp_Updater.checkForUpdates(Cpp_AppUpdaterUrl)
   }

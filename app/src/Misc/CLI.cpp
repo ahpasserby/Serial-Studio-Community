@@ -472,7 +472,7 @@ void CLI::setupUartConnection()
 
   if (m_parser.isSet(m_opts.uartOpt)) {
     const QString device = m_parser.value(m_opts.uartOpt);
-    IO::ConnectionManager::instance().uart()->registerDevice(device);
+    IO::ConnectionManager::instance().uart()->setDriverProperty(QStringLiteral("device"), device);
   }
 
   if (m_parser.isSet(m_opts.baudOpt)) {
@@ -482,6 +482,24 @@ void CLI::setupUartConnection()
       qWarning() << "Invalid baud rate:" << m_parser.value(m_opts.baudOpt);
     else
       IO::ConnectionManager::instance().uart()->setBaudRate(baudRate);
+  }
+
+  // Project mode owns a per-source driver. Persist CLI overrides there as well
+  // as in the UI driver; otherwise the saved project selection wins at connect.
+  auto& model = DataModel::ProjectModel::instance();
+  if (AppState::instance().operationMode() == SerialStudio::ProjectFile
+      && model.sources().size() == 1) {
+    auto settings = model.sources()[0].connectionSettings;
+    if (m_parser.isSet(m_opts.uartOpt)) {
+      settings.remove(QStringLiteral("deviceId"));
+      settings.remove(QStringLiteral("portIndex"));
+      settings.insert(QStringLiteral("device"), m_parser.value(m_opts.uartOpt));
+    }
+    settings.insert(QStringLiteral("baudRate"),
+                    IO::ConnectionManager::instance().uart()->baudRate());
+    model.setSource0ConnectionSettings(settings);
+    if (auto* live = IO::ConnectionManager::instance().driver(0))
+      live->applyConnectionSettings(settings);
   }
 
   IO::ConnectionManager::instance().connectDevice();

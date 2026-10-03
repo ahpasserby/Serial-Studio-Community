@@ -1,21 +1,13 @@
-Copyright (c) 2020–2026 Alex Spataru <https://github.com/alex-spataru>
+Serial Scope — community GPL build / 社区构建
 
-이 소프트웨어는 GNU GPLv3 라이선스 하에 무료 및 오픈 소스로 제공됩니다.
-파생 작업이 동일한 조건 하에 오픈 소스로 유지되는 한 사용, 수정,
-재배포할 수 있습니다.
+Based on Serial Studio v4.0.2.
+Upstream copyright (c) 2020–2026 Alex Spataru.
+Community adaptations (c) 2026 ahpasserby.
 
-→ License: https://www.gnu.org/licenses/gpl-3.0.html
-→ Source:  https://github.com/serial-studio/serial-studio
+UART / TCP / UDP / BLE, text and HEX console, custom parsers, plots and CSV.
+Open a project, select a port and click Connect.
 
-이 프로젝트가 마음에 드시나요? Serial Studio Pro로 개발을 지원해 주세요:
-→ https://store.serial-studio.com/
-
-Pro 기능:
-→ MQTT, XY 및 3D 시각화
-→ Audio, CAN Bus, Modbus, USB, HID 및 Process I/O 드라이버
-→ 출력 위젯, MDF4 내보내기, XMODEM/YMODEM/ZMODEM 전송
-→ 세션 데이터베이스, Data Tables, 값 변환 (JS + Lua)
-→ 다중 소스 프로젝트 및 사용자 정의 워크스페이스
-→ 상업적 라이선스 (GPL 의무 없음)
-
-→ 자세히 알아보기: https://serial-studio.com/
+Source: https://github.com/ahpasserby/Serial-Studio-Community
+Upstream: https://github.com/Serial-Studio/Serial-Studio
+License: GNU GPLv3; see bundled licenses.
+Independent community build, not the official Pro application.

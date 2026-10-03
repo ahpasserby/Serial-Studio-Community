@@ -962,7 +962,7 @@ elseif(APPLE)
   endif()
 
   set(ICON_MACOSX "${CMAKE_CURRENT_SOURCE_DIR}/deploy/macOS/AppIcon.icns")
-  set(ASSETS_MACOSX "${CMAKE_CURRENT_SOURCE_DIR}/deploy/macOS/Assets.car")
+  set(ASSETS_MACOSX "") # Use the community AppIcon.icns, not upstream branding.
 
   set_source_files_properties(
     ${ICON_MACOSX}

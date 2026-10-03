@@ -1,0 +1,283 @@
+{
+    "actions": [],
+    "changeDrivenTransforms": false,
+    "diagramCollapse": {
+        "grp:0": false
+    },
+    "groups": [
+        {
+            "datasets": [
+                {
+                    "datasetId": 0,
+                    "displayFormat": "0d",
+                    "displayTickCount": 5,
+                    "fft": false,
+                    "fftMax": 0,
+                    "fftMin": 0,
+                    "fftSamples": 256,
+                    "fftSamplingRate": 100,
+                    "graph": true,
+                    "groupId": 0,
+                    "index": 1,
+                    "led": false,
+                    "ledHigh": 80,
+                    "log": false,
+                    "numericValue": 0,
+                    "plotMax": 0,
+                    "plotMin": 0,
+                    "title": "ch1",
+                    "uniqueId": 5,
+                    "units": "",
+                    "value": "",
+                    "widget": "",
+                    "widgetMax": 0,
+                    "widgetMin": 0,
+                    "xAxis": -2
+                },
+                {
+                    "datasetId": 1,
+                    "displayFormat": "0d",
+                    "displayTickCount": 5,
+                    "fft": false,
+                    "fftMax": 0,
+                    "fftMin": 0,
+                    "fftSamples": 256,
+                    "fftSamplingRate": 100,
+                    "graph": true,
+                    "groupId": 0,
+                    "index": 2,
+                    "led": false,
+                    "ledHigh": 80,
+                    "log": false,
+                    "numericValue": 0,
+                    "plotMax": 0,
+                    "plotMin": 0,
+                    "title": "ch2",
+                    "uniqueId": 7,
+                    "units": "",
+                    "value": "",
+                    "widget": "",
+                    "widgetMax": 0,
+                    "widgetMin": 0,
+                    "xAxis": -2
+                },
+                {
+                    "datasetId": 2,
+                    "displayFormat": "0d",
+                    "displayTickCount": 5,
+                    "fft": false,
+                    "fftMax": 0,
+                    "fftMin": 0,
+                    "fftSamples": 256,
+                    "fftSamplingRate": 100,
+                    "graph": true,
+                    "groupId": 0,
+                    "index": 3,
+                    "led": false,
+                    "ledHigh": 80,
+                    "log": false,
+                    "numericValue": 0,
+                    "plotMax": 0,
+                    "plotMin": 0,
+                    "title": "ch3",
+                    "uniqueId": 8,
+                    "units": "",
+                    "value": "",
+                    "widget": "",
+                    "widgetMax": 0,
+                    "widgetMin": 0,
+                    "xAxis": -2
+                },
+                {
+                    "datasetId": 3,
+                    "displayFormat": "0d",
+                    "displayTickCount": 5,
+                    "fft": false,
+                    "fftMax": 0,
+                    "fftMin": 0,
+                    "fftSamples": 256,
+                    "fftSamplingRate": 100,
+                    "graph": true,
+                    "groupId": 0,
+                    "index": 4,
+                    "led": false,
+                    "ledHigh": 80,
+                    "log": false,
+                    "numericValue": 0,
+                    "plotMax": 0,
+                    "plotMin": 0,
+                    "title": "ch4",
+                    "uniqueId": 9,
+                    "units": "",
+                    "value": "",
+                    "widget": "",
+                    "widgetMax": 0,
+                    "widgetMin": 0,
+                    "xAxis": -2
+                }
+            ],
+            "title": "Multiple Plot",
+            "uniqueId": 4,
+            "widget": "multiplot"
+        }
+    ],
+    "hexadecimalDelimiters": true,
+    "mqttPublisher": {
+        "cleanSession": true,
+        "customClientId": false,
+        "enabled": false,
+        "hostname": "127.0.0.1",
+        "keepAlive": 60,
+        "mode": 0,
+        "mqttVersion": 2,
+        "notificationTopic": "",
+        "peerVerifyDepth": 10,
+        "peerVerifyMode": 3,
+        "port": 1883,
+        "publishFrequency": 10,
+        "publishNotifications": false,
+        "scriptCode": "",
+        "scriptLanguage": 0,
+        "scriptTopic": "",
+        "sslEnabled": false,
+        "sslProtocol": 5,
+        "topicBase": ""
+    },
+    "nextUniqueId": 10,
+    "plotTimeRange": 10,
+    "pointCount": 100,
+    "schemaVersion": 3,
+    "sources": [
+        {
+            "busType": 0,
+            "checksum": "",
+            "checksumAlgorithm": "",
+            "connection": {
+                "autoReconnect": false,
+                "baudRate": 115200,
+                "dataBitsIndex": 3,
+                "dtr": true,
+                "flowControlIndex": 0,
+                "parityIndex": 0,
+                "stopBitsIndex": 0
+            },
+            "decoder": 3,
+            "decoderMethod": 3,
+            "frameDetection": 2,
+            "frameEnd": "00 00 80 7f",
+            "frameParserCode": "function parse(frame) {\n    // ===== 配置区 =====\n    var CHANNELS      = 4;       // 通道数\n    var LITTLE_ENDIAN = true;    // true=小端(STM32), false=大端\n    var BYTES_PER_VAL = 4;       // float=4, double=8\n    var HEADER_BYTES  = 1;       // 帧头字节数,没有填 0\n    var FOOTER_BYTES  = 0;       // 帧尾字节数,没有填 0\n    var HEADER_VALUE  = [0xAB];      // 帧头字节值,不校验填 []\n    var FOOTER_VALUE  = [];      // 帧尾字节值,不校验填 []\n    // ==================\n\n    var dataBytes = CHANNELS * BYTES_PER_VAL;\n    var needBytes = HEADER_BYTES + dataBytes + FOOTER_BYTES;\n    if (!frame || frame.length < needBytes) return [];\n\n    if (HEADER_BYTES > 0 && HEADER_VALUE.length === HEADER_BYTES) {\n        for (var h = 0; h < HEADER_BYTES; h++) {\n            if (frame[h] !== HEADER_VALUE[h]) return [];\n        }\n    }\n\n    if (FOOTER_BYTES > 0 && FOOTER_VALUE.length === FOOTER_BYTES) {\n        var footStart = HEADER_BYTES + dataBytes;\n        for (var f = 0; f < FOOTER_BYTES; f++) {\n            if (frame[footStart + f] !== FOOTER_VALUE[f]) return [];\n        }\n    }\n\n    function readValue(arr, off, n, le) {\n        var bytes = new Uint8Array(n);\n        for (var k = 0; k < n; k++) bytes[k] = arr[off + k];\n        var dv = new DataView(bytes.buffer);\n        return (n === 8) ? dv.getFloat64(0, le) : dv.getFloat32(0, le);\n    }\n\n    var result = [];\n    for (var i = 0; i < CHANNELS; i++) {\n        result.push(readValue(frame, HEADER_BYTES + i * BYTES_PER_VAL, BYTES_PER_VAL, LITTLE_ENDIAN));\n    }\n    return result;\n}",
+            "frameParserParams": {
+                "bytesPerValue": 1,
+                "endianness": "big",
+                "signedValues": false
+            },
+            "frameParserTemplate": "hexadecimal_bytes",
+            "frameStart": "ab",
+            "hexadecimalDelimiters": true,
+            "sourceId": 0,
+            "title": "Device A"
+        }
+    ],
+    "title": "UARTdrawing",
+    "treeExpansion": {
+        "": false,
+        "UARTdrawing": true,
+        "UARTdrawing/ ": false,
+        "UARTdrawing/Control Loop": false,
+        "UARTdrawing/Dashboard Widgets": true,
+        "UARTdrawing/Dashboard Widgets/Multiple Plot": true,
+        "UARTdrawing/Dashboard Widgets/Multiple Plot/ch1": false,
+        "UARTdrawing/Dashboard Widgets/Multiple Plot/ch2": false,
+        "UARTdrawing/Dashboard Widgets/Multiple Plot/ch3": false,
+        "UARTdrawing/Dashboard Widgets/Multiple Plot/ch4": false,
+        "UARTdrawing/Device A": true,
+        "UARTdrawing/Device A/Frame Parser": false,
+        "UARTdrawing/MQTT Publisher": false,
+        "UARTdrawing/Shared Memory": true,
+        "UARTdrawing/Shared Memory/Dataset Values": false,
+        "UARTdrawing/Workspaces": true,
+        "UARTdrawing/Workspaces/Multiple Plot": false
+    },
+    "widgetSettings": {
+        "2:0:-1": {
+            "holdoff": 0,
+            "interpolationMode": 1,
+            "sweepEnabled": true,
+            "sweepMode": 0,
+            "sweepTimebase": 0,
+            "triggerEdge": 0,
+            "triggerLevel": 0,
+            "triggerSource": 0,
+            "userShowXLabel": true,
+            "userShowYLabel": true,
+            "visibleCurves": null
+        },
+        "9:0:1": {
+            "showAreaUnderPlot": true
+        },
+        "externalWindows": {
+            "data": []
+        },
+        "layout:1002": {
+            "data": {
+                "autoLayout": true,
+                "canvasHeight": 470,
+                "canvasWidth": 1047,
+                "geometries": [
+                    {
+                        "height": 470,
+                        "id": 1,
+                        "relativeIndex": 0,
+                        "state": "normal",
+                        "widgetType": 2,
+                        "width": 523,
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "height": 235,
+                        "id": 5,
+                        "relativeIndex": 0,
+                        "state": "normal",
+                        "widgetType": 9,
+                        "width": 525,
+                        "x": 522,
+                        "y": 0
+                    },
+                    {
+                        "height": 235,
+                        "id": 6,
+                        "relativeIndex": 1,
+                        "state": "normal",
+                        "widgetType": 9,
+                        "width": 525,
+                        "x": 522,
+                        "y": 234
+                    }
+                ],
+                "userReordered": false,
+                "windowOrder": [
+                    1,
+                    5,
+                    6
+                ],
+                "windowOrderTyped": [
+                    {
+                        "relativeIndex": 0,
+                        "widgetType": 2
+                    },
+                    {
+                        "relativeIndex": 0,
+                        "widgetType": 9
+                    },
+                    {
+                        "relativeIndex": 1,
+                        "widgetType": 9
+                    }
+                ]
+            }
+        }
+    },
+    "writerVersion": "4.0.2",
+    "writerVersionAtCreation": "4.0.2"
+}

@@ -212,6 +212,7 @@ Widgets.SmartDialog {
       Button {
         Layout.fillWidth: true
         text: qsTr("Check for Updates")
+        visible: Cpp_UpdaterEnabled
         onClicked: app.checkForUpdates()
       }
 

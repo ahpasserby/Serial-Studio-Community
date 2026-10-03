@@ -1,22 +1,13 @@
-Copyright (c) 2020–2026 Alex Spataru <https://github.com/alex-spataru>
+Serial Scope — community GPL build / 社区构建
 
-Diese Software ist kostenlos und quelloffen unter der GNU GPLv3-Lizenz.
-Sie dürfen sie verwenden, modifizieren und weiterverbreiten, vorausgesetzt,
-dass abgeleitete Werke unter denselben Bedingungen quelloffen bleiben.
+Based on Serial Studio v4.0.2.
+Upstream copyright (c) 2020–2026 Alex Spataru.
+Community adaptations (c) 2026 ahpasserby.
 
-→ Lizenz: https://www.gnu.org/licenses/gpl-3.0.html
-→ Quelle:  https://github.com/serial-studio/serial-studio
+UART / TCP / UDP / BLE, text and HEX console, custom parsers, plots and CSV.
+Open a project, select a port and click Connect.
 
-Gefällt Ihnen dieses Projekt? Erwägen Sie die Unterstützung der Entwicklung
-mit Serial Studio Pro:
-→ https://store.serial-studio.com/
-
-Pro-Funktionen:
-→ MQTT-, XY- und 3D-Visualisierung
-→ Audio-, CAN Bus-, Modbus-, USB-, HID- und Process-I/O-Treiber
-→ Output-Widgets, MDF4-Export und XMODEM/YMODEM/ZMODEM-Übertragung
-→ Sitzungsdatenbank, Data Tables und Werttransformationen (JS + Lua)
-→ Multi-Source-Projekte und benutzerdefinierte Arbeitsbereiche
-→ Kommerzielle Lizenz (keine GPL-Verpflichtungen)
-
-→ Mehr erfahren: https://serial-studio.com/
+Source: https://github.com/ahpasserby/Serial-Studio-Community
+Upstream: https://github.com/Serial-Studio/Serial-Studio
+License: GNU GPLv3; see bundled licenses.
+Independent community build, not the official Pro application.

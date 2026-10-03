@@ -1,0 +1,227 @@
+{
+    "actions": [],
+    "changeDrivenTransforms": false,
+    "diagramCollapse": {
+        "grp:0": false
+    },
+    "groups": [
+        {
+            "datasets": [
+                {
+                    "datasetId": 0,
+                    "displayFormat": "0d",
+                    "displayTickCount": 5,
+                    "fft": false,
+                    "fftMax": 0,
+                    "fftMin": 0,
+                    "fftSamples": 256,
+                    "fftSamplingRate": 100,
+                    "graph": true,
+                    "groupId": 0,
+                    "index": 1,
+                    "led": false,
+                    "ledHigh": 80,
+                    "log": false,
+                    "numericValue": 0,
+                    "plotMax": 0,
+                    "plotMin": 0,
+                    "title": "实际转速",
+                    "uniqueId": 5,
+                    "units": "rad/s",
+                    "value": "",
+                    "widget": "",
+                    "widgetMax": 0,
+                    "widgetMin": 0,
+                    "xAxis": -2
+                },
+                {
+                    "datasetId": 1,
+                    "displayFormat": "0d",
+                    "displayTickCount": 5,
+                    "fft": false,
+                    "fftMax": 0,
+                    "fftMin": 0,
+                    "fftSamples": 256,
+                    "fftSamplingRate": 100,
+                    "graph": true,
+                    "groupId": 0,
+                    "index": 2,
+                    "led": false,
+                    "ledHigh": 80,
+                    "log": false,
+                    "numericValue": 0,
+                    "plotMax": 0,
+                    "plotMin": 0,
+                    "title": "目标转速",
+                    "uniqueId": 7,
+                    "units": "rad/s",
+                    "value": "",
+                    "widget": "",
+                    "widgetMax": 0,
+                    "widgetMin": 0,
+                    "xAxis": -2
+                }
+            ],
+            "title": "Multiple Plot",
+            "uniqueId": 4,
+            "widget": "multiplot"
+        }
+    ],
+    "hexadecimalDelimiters": true,
+    "mqttPublisher": {
+        "cleanSession": true,
+        "customClientId": false,
+        "enabled": false,
+        "hostname": "127.0.0.1",
+        "keepAlive": 60,
+        "mode": 0,
+        "mqttVersion": 2,
+        "notificationTopic": "",
+        "peerVerifyDepth": 10,
+        "peerVerifyMode": 3,
+        "port": 1883,
+        "publishFrequency": 10,
+        "publishNotifications": false,
+        "scriptCode": "",
+        "scriptLanguage": 0,
+        "scriptTopic": "",
+        "sslEnabled": false,
+        "sslProtocol": 5,
+        "topicBase": ""
+    },
+    "nextUniqueId": 10,
+    "plotTimeRange": 10,
+    "pointCount": 100,
+    "schemaVersion": 3,
+    "sources": [
+        {
+            "busType": 0,
+            "checksum": "",
+            "checksumAlgorithm": "",
+            "connection": {
+                "autoReconnect": false,
+                "baudRate": 115200,
+                "dataBitsIndex": 3,
+                "dtr": true,
+                "flowControlIndex": 0,
+                "parityIndex": 0,
+                "stopBitsIndex": 0
+            },
+            "decoder": 3,
+            "decoderMethod": 3,
+            "frameDetection": 2,
+            "frameEnd": "00 00 80 7f",
+            "frameParserCode": "// 接收缓存：放在函数外，保留尚未收完整的数据\nvar rxBuffer = [];\n\nfunction parse(frame) {\n    // ===== 配置区 =====\n    var CHANNELS      = 2;       // 有效通道数\n    var LITTLE_ENDIAN = true;    // true=小端(STM32), false=大端\n    var BYTES_PER_VAL = 4;       // float=4, double=8\n    var HEADER_BYTES  = 1;       // 帧头字节数，没有填 0\n    var FOOTER_BYTES  = 0;       // 帧尾字节数，没有填 0\n    var HEADER_VALUE  = [0xAB];  // 帧头字节值，不校验填 []\n    var FOOTER_VALUE  = [];      // 帧尾字节值，不校验填 []\n    var PADDING_BYTES = 40;      // 有效数据后的补零字节数\n    // ==================\n\n    var dataBytes = CHANNELS * BYTES_PER_VAL;\n    var needBytes = HEADER_BYTES + dataBytes\n                  + PADDING_BYTES + FOOTER_BYTES;\n\n    // 保存本次收到的数据\n    if (!frame) return [];\n\n    for (var b = 0; b < frame.length; b++) {\n        rxBuffer.push(frame[b]);\n    }\n\n    function readValue(arr, off, n, le) {\n        var bytes = new Uint8Array(n);\n        for (var k = 0; k < n; k++) {\n            bytes[k] = arr[off + k];\n        }\n\n        var dv = new DataView(bytes.buffer);\n        return (n === 8)\n            ? dv.getFloat64(0, le)\n            : dv.getFloat32(0, le);\n    }\n\n    // 一次接收可能包含多帧\n    var results = [];\n\n    while (rxBuffer.length >= needBytes) {\n        var valid = true;\n\n        // 校验帧头\n        if (HEADER_BYTES > 0 &&\n            HEADER_VALUE.length === HEADER_BYTES) {\n            for (var h = 0; h < HEADER_BYTES; h++) {\n                if (rxBuffer[h] !== HEADER_VALUE[h]) {\n                    valid = false;\n                    break;\n                }\n            }\n        }\n\n        // 校验补零区域，辅助判断帧是否对齐\n        if (valid) {\n            var paddingStart = HEADER_BYTES + dataBytes;\n\n            for (var p = 0; p < PADDING_BYTES; p++) {\n                if (rxBuffer[paddingStart + p] !== 0) {\n                    valid = false;\n                    break;\n                }\n            }\n        }\n\n        // 校验帧尾：位于数据和补零区域之后\n        if (valid && FOOTER_BYTES > 0 &&\n            FOOTER_VALUE.length === FOOTER_BYTES) {\n            var footStart = HEADER_BYTES + dataBytes\n                          + PADDING_BYTES;\n\n            for (var f = 0; f < FOOTER_BYTES; f++) {\n                if (rxBuffer[footStart + f] !== FOOTER_VALUE[f]) {\n                    valid = false;\n                    break;\n                }\n            }\n        }\n\n        // 未对齐：丢弃一个字节，重新寻找有效帧\n        if (!valid) {\n            rxBuffer.shift();\n            continue;\n        }\n\n        // 解析当前帧的各个通道\n        var result = [];\n\n        for (var i = 0; i < CHANNELS; i++) {\n            var value = readValue(\n                rxBuffer,\n                HEADER_BYTES + i * BYTES_PER_VAL,\n                BYTES_PER_VAL,\n                LITTLE_ENDIAN\n            );\n\n            if (!isFinite(value)) valid = false;\n            result.push(value);\n        }\n\n        // 移除已经处理的完整帧\n        rxBuffer.splice(0, needBytes);\n\n        if (valid) results.push(result);\n    }\n\n    // 剩余不足一帧的数据留到下次处理\n    return results;\n}\n",
+            "frameParserParams": {
+                "bytesPerValue": 1,
+                "endianness": "big",
+                "signedValues": false
+            },
+            "frameParserTemplate": "hexadecimal_bytes",
+            "frameStart": "ab",
+            "hexadecimalDelimiters": true,
+            "sourceId": 0,
+            "title": "Device A"
+        }
+    ],
+    "title": "PID",
+    "treeExpansion": {
+        "": false,
+        "UARTdrawing": true,
+        "UARTdrawing/ ": false,
+        "UARTdrawing/Control Loop": false,
+        "UARTdrawing/Dashboard Widgets": true,
+        "UARTdrawing/Dashboard Widgets/Multiple Plot": true,
+        "UARTdrawing/Dashboard Widgets/Multiple Plot/ch1": false,
+        "UARTdrawing/Dashboard Widgets/Multiple Plot/ch2": false,
+        "UARTdrawing/Device A": true,
+        "UARTdrawing/Device A/Frame Parser": false,
+        "UARTdrawing/MQTT Publisher": false,
+        "UARTdrawing/Shared Memory": true,
+        "UARTdrawing/Shared Memory/Dataset Values": false,
+        "UARTdrawing/Workspaces": true,
+        "UARTdrawing/Workspaces/Multiple Plot": false
+    },
+    "widgetSettings": {
+        "2:0:-1": {
+            "holdoff": 0,
+            "interpolationMode": 1,
+            "sweepEnabled": true,
+            "sweepMode": 0,
+            "sweepTimebase": 0,
+            "triggerEdge": 0,
+            "triggerLevel": 0,
+            "triggerSource": 0,
+            "userShowXLabel": true,
+            "userShowYLabel": true,
+            "visibleCurves": null
+        },
+        "9:0:1": {
+            "showAreaUnderPlot": true
+        },
+        "externalWindows": {
+            "data": []
+        },
+        "layout:1002": {
+            "data": {
+                "autoLayout": true,
+                "canvasHeight": 470,
+                "canvasWidth": 1047,
+                "geometries": [
+                    {
+                        "height": 470,
+                        "id": 1,
+                        "relativeIndex": 0,
+                        "state": "normal",
+                        "widgetType": 2,
+                        "width": 523,
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "height": 235,
+                        "id": 5,
+                        "relativeIndex": 0,
+                        "state": "normal",
+                        "widgetType": 9,
+                        "width": 525,
+                        "x": 522,
+                        "y": 0
+                    },
+                    {
+                        "height": 235,
+                        "id": 6,
+                        "relativeIndex": 1,
+                        "state": "normal",
+                        "widgetType": 9,
+                        "width": 525,
+                        "x": 522,
+                        "y": 234
+                    }
+                ],
+                "userReordered": false,
+                "windowOrder": [
+                    1,
+                    5,
+                    6
+                ],
+                "windowOrderTyped": [
+                    {
+                        "relativeIndex": 0,
+                        "widgetType": 2
+                    },
+                    {
+                        "relativeIndex": 0,
+                        "widgetType": 9
+                    },
+                    {
+                        "relativeIndex": 1,
+                        "widgetType": 9
+                    }
+                ]
+            }
+        }
+    },
+    "writerVersion": "4.0.2",
+    "writerVersionAtCreation": "4.0.2"
+}
