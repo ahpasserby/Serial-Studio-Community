@@ -16,6 +16,15 @@ shutil.copytree(sys.argv[1], sys.argv[2], symlinks=False)
 PY_COPY
 qt_prefix="${QT_PREFIX:-$(brew --prefix)}"
 "$qt_prefix/bin/macdeployqt" "$app_dir" -qmldir="$repo_dir/app/qml" -always-overwrite
+# The CLI's headless mode needs the offscreen platform plugin too.
+qt_plugins="$("$qt_prefix/bin/qmake6" -query QT_INSTALL_PLUGINS)"
+mkdir -p "$app_dir/Contents/PlugIns/platforms"
+cp -L "$qt_plugins/platforms/libqoffscreen.dylib" "$app_dir/Contents/PlugIns/platforms/"
+for module in QtGui QtCore; do
+  install_name_tool -change "@rpath/$module.framework/Versions/A/$module" \
+    "@executable_path/../Frameworks/$module.framework/Versions/A/$module" \
+    "$app_dir/Contents/PlugIns/platforms/libqoffscreen.dylib"
+done
 python3 "$repo_dir/scripts/fix-homebrew-qml-links.py" "$app_dir"
 mkdir -p "$app_dir/Contents/Resources/Community"
 ditto "$repo_dir/examples/Community" "$app_dir/Contents/Resources/Community/Examples"
