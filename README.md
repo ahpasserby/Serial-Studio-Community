@@ -12,14 +12,14 @@
 
 1. 打开应用，选择 UART 和实际串口，设置设备波特率。
 2. 只收发数据选择 Console Only；文本 CSV 绘图选择 Quick Plot；自定义协议选择 Parse via Project File。
-3. 点击右上角 Connect。底部输入框发送文本或 HEX；解析项目控制绘图和命令按钮。
+3. 点击右上角 Connect。控制台和图表页底部都有发送栏：输入文本，点击 Send 或按回车发送；可选择 HEX、行尾和校验方式。图表持续刷新，无需切回控制台。
 
 ## 已有配置
 
 - [PID.ssproj](examples/Community/PID.ssproj)
 - [UARTdrawing.ssproj](examples/Community/UARTdrawing.ssproj)
 
-这两个文件保留用户现有解析脚本和绘图配置，只移除了本机串口选择及 USB 设备序列号。打开后需要重新选择实际串口。PID 示例读取 49 字节帧（AB + 两个小端 float + 40 字节补零）；不是应用的通用协议限制。配置未额外添加命令按钮。已有 STM32 固件可通过控制台发送 `po=数值#`、`io=数值#`、`do=数值#`；关闭 HEX，不追加换行，一次一条。
+这两个文件保留用户现有解析脚本和绘图配置，只移除了本机串口选择及 USB 设备序列号。打开后需要重新选择实际串口。PID 示例读取 49 字节帧（AB + 两个小端 float + 40 字节补零）；不是应用的通用协议限制。配置未额外添加命令按钮。已有 STM32 固件可通过底部发送栏发送 `po=数值#`、`io=数值#`、`do=数值#`；关闭 HEX，不追加换行，一次一条。
 
 ## 从源码构建
 
@@ -54,6 +54,7 @@ brew install cmake ninja qtbase qtdeclarative qtsvg qtgraphs qtconnectivity qtse
 ## 验证
 
 ```sh
+QT_QPA_PLATFORM=offscreen qmltestrunner -input tests/community -o -,txt
 node scripts/test-community-projects.js
 python3 scripts/test-community-uart.py
 ```

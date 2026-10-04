@@ -574,6 +574,7 @@ set(QML_SOURCES
   qml/Widgets/ProjectTableHeader.qml
   qml/Widgets/ProjectTableRow.qml
   qml/Widgets/ProNotice.qml
+  qml/Widgets/SerialSendBar.qml
   qml/Widgets/SearchField.qml
   qml/Widgets/SmartWindow.qml
   qml/Widgets/SmartDialog.qml

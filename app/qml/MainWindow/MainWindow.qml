@@ -646,6 +646,13 @@ Widgets.SmartWindow {
           }
         ]
       }
+
+      Widgets.SerialSendBar {
+        Layout.fillWidth: true
+        visible: root.dashboardVisible
+        handler: Cpp_Console_Handler
+        connection: Cpp_IO_Manager
+      }
     }
 
     //

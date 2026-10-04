@@ -12,6 +12,8 @@ jobs:
         run: brew install cmake ninja qtbase qtdeclarative qtsvg qtgraphs qtconnectivity qtserialport qt5compat qttools
       - name: Build GPL application
         run: ./scripts/build-community-macos.sh
+      - name: Verify dashboard send controls
+        run: QT_QPA_PLATFORM=offscreen qmltestrunner -input tests/community -o -,txt
       - name: Verify project examples
         run: node scripts/test-community-projects.js
       - name: Virtual UART integration test
